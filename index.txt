@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Ember.js • TodoMVC</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+  
+  Module: Adding the first route and template
+  Module: Adding child routes
+  Notes: move the entire ul of todos into a new template, "todos/index"
+<script type="text/x-handlebars" data-template-name="todos/index">
+  <ul id="todo-list">
+  
+    Module: Displaying model data
+    Controller: instance of ArrayController (default provided by Ember)
+    {{#each controller itemController="todo"}}
+    
+    Module: Marking a model as complete or incomplete
+    Note: Update template to wrap each todo in its own controller
+    Controller: Todos.TodoController
+    File: todo_controller.js
+    Notes: Each todo matching the name used as the itemController to a class (Todos.TodoController)
+    Model: Todos.TodoController
+   
+      <li {{bindAttr class="isCompleted:completed
+       Module: Toggling between showing and editing states
+       Notes: get here double clicking a todo
+      	isEditing:editing"}}>
+      
+      Ref: Todos.EditTodoView
+      Controller: Todos.TodoController
+        {{#if isEditing}}
+        
+        Module: Accepting edits
+        File: edit_todo_view.js
+        View: Todos.EditTodoView
+        Controller: Todos.TodoController
+        Bind: title to Todos.TodoController (default behavior of proxying all requests to tis model)
+        
+          {{view Todos.EditTodoView valueBinding="title"}}
+        {{else}}
+        
+        module: Marking a model as complete
+        Note: wrapping each todo in its own controller
+        Controller: Todos.TodoController
+        
+          {{view Ember.Checkbox checkedBinding="isCompleted" class="toggle"}}
+          
+        
+          Module: Toggling between showing and editing status
+          Notes: action helper added so double-clicks will call editTodo on controller (Todos.TodoController)
+          
+          <label {{action "editTodo" on="doubleClick"}}>{{title}}</label>
+          
+          Module: Deleting a model
+          Controller: Todos.TodoController
+          File: todo_controller.js
+          Method: revoveTodo
+          <button {{action "removeTodo"}} class="destroy"></button>
+        {{/if}}
+      </li>
+    {{/each}}
+  </ul>
+  </script>
+
+  File: todos_controller.js
+  <script type="text/x-handlebars" data-template-name="todos">
+
+  <section id="todoapp">
+    <header id="header">
+      <h1>todos</h1>
+      
+      Module: Creating new model instance
+      Controller: Todos.TodosController (previously was default Ember controller for template)
+      File: todos_controller.js
+      Notes: Connect the newTitle property of the template's controller to the value of input
+      
+      {{view Ember.TextField id="new-todo" placeholder="What needs to be done?"
+             valueBinding="newTitle" action="createTodo"}}
+    </header>
+
+      <section id="main">
+      
+      Module: Adding child routes
+      Notes: When the application loads at the url '/', Ember.js will enter the todos route and render the todos template
+      Notes: Also transitions into the todos.index route and fills the outlet in the todos template with the doos/index template
+      Notes: designates an area that will dynamically update as we transition between routes
+      Notes: first child route: list a  todos
+      Notes: first child router: Todos.TodosIndexRoute
+      Model: TodosIndexRoute, model method
+      Controller: Todos.TodosController
+      Template: todos, and todos/index
+      
+        {{outlet}}
+
+        Module: Indicating when all todos are complete
+        Controller property: allAreDone
+        Controller: Todos.TodosController
+        File: todos_controller.js
+        Notes: Checkbox checked when the controller property allAreDone is true and unchecked when the proper allAreDone is false
+        Notes: allAreDone is true the controller has any todos and every todo's isCompleted is true
+        
+        {{view Ember.Checkbox id="toggle-all" checkedBinding="allAreDone"}}
+      </section>
+
+      <footer id="footer">
+        <span id="todo-count">
+        
+        Module: Displaying the number of incomplete todos
+        Controller: Todos.TodosController
+        File: todos_controller.js
+        Notes: remaining property returns the number of todos whose isCompleted property is false
+        Notes: inflection property returns the plural or singular version of "item"
+        
+          <strong>{{remaining}}</strong> {{inflection}} left</span>
+        <ul id="filters">
+          <li>
+          
+          Module: Transitioning back to showing all todos
+          Route: 
+          
+          {{#linkTo 'todos.index' activeClass='selected'}}All{{/linkTo}}
+          </li>
+          <li>
+          
+          Module: Transitioning to show only incomplete todos
+          Route: Todos.TodosCompletedRoute
+          File: router.js
+          
+          {{#linkTo 'todos.active' activeClass="selected"}}Active{{/linkTo}}
+          </li>
+          <li>
+          
+          Module: Transitioning to show only complete todos
+          Route: Todos.TodosCompletedRoute
+          File: todos_controller.js
+          
+          {{#linkTo 'todos.completed' activeClass='selected'}}Completed{{/linkTo}}
+          </li>
+        </ul>
+
+        Module: Displaying about to remove all completed todos
+        Controller: Todos.TodosController
+        File: todos_controller.js
+        
+        {{#if hasCompleted}}
+        <button id="clear-completed" {{action "clearCompleted"}}>
+        Clear completed ({{completed}})
+        </button>
+        {{/if}}
+      </footer>
+  </section>
+
+  <footer id="info">
+    <p>Double-click to edit a todo</p>
+  </footer>
+  
+  </script>
+
+  <script src="js/libs/jquery.min.js"></script>
+  <script src="js/libs/handlebars.js"></script>
+  <script src="js/libs/ember.js"></script>
+  <script src="js/libs/ember-data.js"></script>
+  <script src="js/libs/localstorage_adapter.js"></script>
+  
+  <script src="js/application.js"></script>
+  <script src="js/router.js"></script>
+  
+  <script src="js/models/store.js"></script>
+  <script src="js/models/todo.js"></script>
+  
+  <script src="js/controllers/todos_controller.js"></script>
+  <script src="js/controllers/todo_controller.js"></script>
+  
+  <script src="js/views/edit_todo_view.js"></script>
+
+</body>
+</html>
